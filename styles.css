@@ -1,0 +1,23 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+#map {
+  height: 100vh;
+}
+
+.div-label {
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 5px;
+  padding: 2px, 5px;
+  text-align: center;
+  transform: scale(0.6);
+}
+
+.div-label b {
+  color: #616364;
+  font-weight: normal;
+  text-shadow: -1px -1px 0 #e4edf0, 1px -1px 0 #e4edf0, -1px 1px 0 #e4edf0,
+    1px 1px 0 #e4edf0;
+  white-space: nowrap;
+}

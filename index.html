@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Leafler CDN -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+
+    <link rel="stylesheet" type="text/css" href="/styles.css" />
+
+    <title>Leaflet JS with Hoang Sa - Truong</title>
+  </head>
+  <body id="map">
+      <script>const map = L.map('map').setView([15.484118012785375, 111.3663912568838], 6);
+
+        //Basemap
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution:
+            '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        }).addTo(map);
+        
+        // Load GeoJSON data of Hoang Sa, Truong Sa
+        let geojsonLayer;
+        fetch('/HoangSa-TruongSa.geojson')
+          .then(response => response.json())
+          .then(data => {
+            geojsonLayer = L.geoJSON(data, {
+              style: {
+                color: '#9789a7',
+                weight: 2,       
+                opacity: 1,      
+                fillColor: '#96c78d',
+                fillOpacity: 0.8
+              }
+            }).addTo(map);
+            updateVisibility();
+          })
+          .catch(error => console.error('Error loading the GeoJSON file:', error));
+
+        //Create Labels
+        const labels = [
+          createLabel(16.3927844766637, 111.03387498843425, 'Hoàng Sa'),
+          createLabel(9.688531475317545, 113.91731544026695, 'Trường Sa')
+        ];
+
+        function createLabel(lat, lng, text) {
+          const addLabel = L.divIcon({
+            className: 'div-label',
+            html: `<b>${text}</b>`
+          });
+          return L.marker([lat, lng], { icon: addLabel }).addTo(map);
+        }
+      
+        //Control labels visibility by zoom level
+        function updateVisibility() {
+          const zoomThreshold = 5;
+          const currentZoom = map.getZoom();
+
+          if (geojsonLayer) {
+            currentZoom > zoomThreshold ? map.addLayer(geojsonLayer) : map.removeLayer(geojsonLayer);
+          }
+
+          labels.forEach(label => {
+            currentZoom > zoomThreshold ? map.addLayer(label) : map.removeLayer(label);
+          });
+        }
+
+        //Call zoom event listener
+        map.on('zoomend', updateVisibility);
+      </script>
+    </div>
+  </body>
+</html>
